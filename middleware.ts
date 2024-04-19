@@ -1,11 +1,13 @@
 import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
-    publicRoutes: ["/","/api/webhook/clerk"],
-    ignoredRoutes: ["/api/webhook/clerk"]
+  // An array of public routes that don't require authentication.
+  publicRoutes: ["/api/webhook/clerk"],
 
+  // An array of routes to be ignored by the authentication middleware.
+  ignoredRoutes: ["/api/webhook/clerk", "/api/uploadthing"], // Add "/api/uploadthing" here
 });
 
 export const config = {
-  matcher: ["/((?!.+.[w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
