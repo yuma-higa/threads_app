@@ -10,7 +10,7 @@ interface Props {
     author: {
         name: string;
         image: string;
-        id: string;
+        id: string |null;
     }
     community: {
         id: string;
