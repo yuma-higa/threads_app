@@ -33,7 +33,7 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
         path: "author", // Populate the author field within children
         model: User,
         select: "_id name parentId image", // Select only _id and username fields of the author
-      },
+      }
     });
 
   // Count the total number of top-level posts (threads) i.e., threads that are not comments.
@@ -157,7 +157,7 @@ export async function deleteThread(id: string, path: string): Promise<void> {
   }
 }
 
-export async function fetchThreadById(threadId: string) {
+export async function fetchThreadById(threadId: string, currentUserId: string) {
   connectToDB();
 
   try {
@@ -193,7 +193,15 @@ export async function fetchThreadById(threadId: string) {
       })
       .exec();
 
-    return thread;
+    if(!thread) throw new Error("thread not found");
+    const likesCount = thread.likes.length;
+    const userLiked = thread.likes.includes(currentUserId);
+
+    const threadObject = thread.toObject();
+    threadObject.likesCount = likesCount;
+    threadObject.userLiked = userLiked;
+    return threadObject;
+
   } catch (err) {
     console.error("Error while fetching thread:", err);
     throw new Error("Unable to fetch thread");
@@ -236,5 +244,36 @@ export async function addCommentToThread(
   } catch (err) {
     console.error("Error while adding comment:", err);
     throw new Error("Unable to add comment");
+  }
+}
+
+export async function toggleLikeOnThread(threadId: string, userId: string|undefined,path: string){
+  try {
+    connectToDB();
+    const thread = await Thread.findById(threadId);
+
+    if(!thread){
+      throw new Error("thread not found");
+    }
+
+    const userLiked = thread.likes.includes(userId);
+
+    if(userLiked){
+      thread.likes.pull(userId);
+    }else{
+      thread.likes.push(userId);
+    }
+
+    thread.likesCount = thread.likes.length;
+    await thread.save();
+    
+    revalidatePath(path);
+    return{
+      likesCount: thread.likesCount,
+      userLiked: !userLiked,
+    };
+  } catch (error:any) {
+    console.error("error on toggling likes", error);
+    throw new Error(`failed to toggle like: ${error.message}`);
   }
 }
