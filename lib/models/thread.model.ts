@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { number } from "zod";
 
 const threadSchema = new mongoose.Schema({
     text: { type: String, required: true},
@@ -23,8 +24,23 @@ const threadSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Thread"
         }
-    ]
+    ],
+    likes:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"User",
+        }
+    ],
+    likesCount:{
+        type:Number,
+        default: 0
+    }
    
+});
+
+threadSchema.pre('save', function(next) {
+    this.likesCount = this.likes.length;
+    next();
 });
 
 const Thread = mongoose.models.Thread || mongoose.model("Thread", threadSchema);

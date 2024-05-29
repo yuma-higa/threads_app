@@ -1,6 +1,9 @@
+
+
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteButton from "../ui/deleteButton";
 
 interface Props {
     id: string;
@@ -10,7 +13,7 @@ interface Props {
     author: {
         name: string;
         image: string;
-        id: string |null;
+        id: string;
     }
     community: {
         id: string;
@@ -24,6 +27,7 @@ interface Props {
         }
     }[]
     isComment?: boolean;
+    
 }
 
 const ThreadCard = ({
@@ -37,6 +41,7 @@ const ThreadCard = ({
     comments,
     isComment,
 }:Props)=>{
+    
     return(
        <article className = {`flex w-full flex-col rounded-xl ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"} `}>
         <div className = "flex items-start justify-between">
@@ -62,7 +67,7 @@ const ThreadCard = ({
                         {content}
                     </p>
                     <div className = {`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
-                        <div className = "flex gap-3.5">
+                        <div className = "flex gap-4 items-center">
                             <Image
                             src="/assets/heart-gray.svg"
                             alt = "heart"
@@ -93,6 +98,11 @@ const ThreadCard = ({
                             height = {24}
                             className = "cursor-pointer object-contain"
                             />
+                            <div className="cursor-pointer object-contain">
+                            {currentUserId === author.id && (
+                                <DeleteButton id = {id} />
+                            )}
+                            </div>
                         </div>
                         {isComment && comments.length>0 && (
                             <Link href = {`/thread/${id}`}>
