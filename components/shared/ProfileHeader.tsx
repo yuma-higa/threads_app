@@ -1,4 +1,7 @@
+import DeleteAccountButton from "../ui/deleteAccountButton";
 import Image from "next/image";
+import { deleteUser } from "@/lib/actions/user.actions";
+import { useRouter} from "next/navigation";
 
 interface Props {
     accountId: string;
@@ -12,6 +15,8 @@ interface Props {
 
 const ProfileHeader = ({ accountId, authUserId, name, username, imgUrl,
     bio, type }: Props) => {
+    
+    
     return(
         <div className = "flex w-full flex-col justify-start">
            <div className="flex items-center justify-betwen">
@@ -28,6 +33,9 @@ const ProfileHeader = ({ accountId, authUserId, name, username, imgUrl,
                         <h2 className="text-left text-heading3-bold text-light-1">{name}</h2>
                         <p className = "text-base-medium text-gray-1">@{username}</p>
                     </div>
+                    {accountId === authUserId && (
+                        <DeleteAccountButton authUserId = {authUserId}/>
+                    )}
                 </div>
                 </div>
                 {/*TODO: community */}

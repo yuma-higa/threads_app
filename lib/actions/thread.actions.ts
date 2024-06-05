@@ -238,3 +238,23 @@ export async function addCommentToThread(
     throw new Error("Unable to add comment");
   }
 }
+
+export async function toggleLikeOnThread(threadId: string, userId: string){
+  connectToDB();
+  try{
+    const thread = await Thread.findById(threadId);
+    if(!thread){
+      throw new Error("thread is not found");
+    }
+
+    const userIndex = thread.likes.indexOf(userId);
+    if(userIndex === -1){
+      thread.likes.push(userId);
+    }else{
+      thread.likes.splice(userIndex,1);
+    }
+    await thread.save()
+  }catch(err:any){
+    throw new Error(err);
+  }
+}

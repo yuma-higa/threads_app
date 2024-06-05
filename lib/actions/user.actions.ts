@@ -1,6 +1,6 @@
 "use server";
 
-import { FilterQuery, SortOrder } from "mongoose";
+import mongoose, { FilterQuery, Mongoose, SortOrder } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import Community from "../models/community.model";
@@ -179,5 +179,24 @@ export async function getActivity(userId: string) {
   } catch (error) {
     console.error("Error fetching replies: ", error);
     throw error;
+  }
+}
+
+export async function deleteUser(userId: string): Promise<void>{
+  try{
+    connectToDB();
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Delete all posts by the user
+    await Thread.deleteMany({ author: user._id });
+
+    // Delete the user
+    await User.deleteOne({ _id: user._id });
+  }catch(error: any){
+    throw new Error(`failed to delete  user: ${error.message}`)
   }
 }
