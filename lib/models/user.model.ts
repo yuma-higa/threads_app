@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
       ref: "Community",
     },
   ],
+  
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
