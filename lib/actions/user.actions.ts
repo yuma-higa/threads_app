@@ -6,7 +6,8 @@ import { revalidatePath } from "next/cache";
 import Community from "../models/community.model";
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
-
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { NextResponse } from 'next/server';
 import { connectToDB } from "../mongoose";
 
 
@@ -184,9 +185,11 @@ export async function getActivity(userId: string) {
   }
 }
 
-export async function deleteUser(userId: string): Promise<void>{
-  try{
+
+export async function deleteUser(userId: string): Promise<{ message: string } | { error: string }> {
+  try {
     connectToDB();
+
     const user = await User.findOne({ id: userId });
 
     if (!user) {
@@ -195,11 +198,14 @@ export async function deleteUser(userId: string): Promise<void>{
 
     // Delete all posts by the user
     await Thread.deleteMany({ author: user._id });
-
-    // Delete the user
+    // Delete the user from the application's database
     await User.deleteOne({ _id: user._id });
-    
-  }catch(error: any){
-    throw new Error(`failed to delete  user: ${error.message}`)
+    // Delete the user from the Clerk system
+    await clerkClient.users.deleteUser(userId);
+
+    return { message: 'User deleted' };
+  } catch (error: any) {
+    console.log(error);
+    return { error: `Failed to delete user: ${error.message}` };
   }
 }
