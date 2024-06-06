@@ -9,6 +9,8 @@ import User from "../models/user.model";
 
 import { connectToDB } from "../mongoose";
 
+
+
 export async function fetchUser(userId: string) {
   try {
     connectToDB();
@@ -196,6 +198,7 @@ export async function deleteUser(userId: string): Promise<void>{
 
     // Delete the user
     await User.deleteOne({ _id: user._id });
+    
   }catch(error: any){
     throw new Error(`failed to delete  user: ${error.message}`)
   }
