@@ -1,4 +1,4 @@
-import DeleteAccountButton from "../ui/deleteAccountButton";
+import DeleteAccountButton from "../ui/deleteAccountButton"; // import DeleteAccountButton 
 import Image from "next/image";
 import { deleteUser } from "@/lib/actions/user.actions";
 import { useRouter} from "next/navigation";

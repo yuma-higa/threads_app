@@ -1,7 +1,7 @@
 "use client"
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { deleteUser } from "@/lib/actions/user.actions"; // replace with the actual path
+import { deleteUser } from "@/lib/actions/user.actions"; 
 
 interface DeleteAccountButtonProps {
     authUserId: string;
